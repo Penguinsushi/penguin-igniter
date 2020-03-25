@@ -1,2 +1,2 @@
 # penguin-igniter
-Bare-bones php mvc website framework because.
+Personal bare-bones php mvc website framework because.
