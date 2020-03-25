@@ -1,0 +1,235 @@
+=============================================================================================================
+PenguinIgniter (simplistic, CodeIgniter-inspired site framework)
+VERSION 1.0.3
+DOCUMENTATION
+# last updated 2016-03-29
+=============================================================================================================
+
+CONTENTS:
+
+I.   General Framework
+
+II.  Core
+
+III. Controllers
+
+IV.  Models
+
+V.   Views
+
+VI.  Third-party Code Application
+	
+=============================================================================================================
+I. GENERAL FRAMEWORK 
+=============================================================================================================
+
+I like simplicity.
+
+This MVC framework is based on the general ideas behind CodeIgniter (codeigniter.com), but simplified to be a bit more straight-forward, open and easy to follow.
+Note that THIS FRAMEWORK USES ABSOLUTELY NO ACTUAL CODE FROM CODEIGNITER - only some basic concepts.
+
+It works as follows:
+
+1. A primary/index php file (e.g. index.php) includes the config.inc file (located in app/), and then the init.inc file (located in core/) which processes the url request:
+	- e.g. http://www.site.com/blog/entry/102
+	- NOTE: this framework assumes you are employing some form of url-rewrite to direct traffic to a primary/index php file even though it is not explicitly called.  If you are not using a rewrite, you can, theoretically, include your index file (e.g. index.php/) as part of the base_url
+	
+2. The script init.inc then breaks up the url elements (character strings between slashes) following the base url and examines them one by one:
+
+3a. If the first url element ('blog') matches a controller Controller_[url element] (at app/controllers/Controller_[url element].php), the site loads that controller
+3b. If the first url element is defined but does not match a controller, the site returns a 404 error page (as defined in app/config.inc)
+3c. If the first url element is simply empty, the site assumes the default_page (as defined in app/config.inc) is desired
+
+4a. If a second url element ('entry') exists AND it is a valid method for the controller loaded, the controller executes that method
+4b. If a second url element does not exist OR it is not a valid method for the controller loaded, the controller executes its index() method
+
+5. Any additional url elements ('102') are passed to the controller method executed as its argument as values in a variable array 
+- If method 'entry' did not exist, both 'entry' *and* '102' would be passed in the variable array to the index() method.
+
+NOTE: Careful naming things when passing args to the index() method; it is possible to collide: if [controller]::var() exists, you CAN NOT pass 'var' as an argument to the [controller]::index() method.
+
+6. The executed controller completes its processes and produces output, probably by displaying an html/css view
+
+=============================================================================================================
+II. CORE FUNCTIONS AND CLASSES
+=============================================================================================================
+
+The core is a set of classes and functions that may be used by Models, Controllers and occasionally Views and are designed to streamline common operations.  Many are used by the framework structure itself, but some are simply resources to be used in developers' app files.  
+See individual files for more info and usage examples.
+
+Article (core/classes/Article.php)
+        - The Article class is a generic, versatile data object class.  By constructing a compatible table, it can be used for a variety of text-data applications
+
+ArticleDigitalAsset (core/classes/ArticleDigitalAsset.php)
+        - The ArticleDigitalAsset class is a data object class that is intended to contain references to files related to a given Article object - such as images, audio files, pdfs, etc
+
+Autoload (core/autoload.php)
+	- The autoload function allows classes (core/controllers/models) to be loaded automatically when they are called instead of having each page load them manually.
+        - Note: this function is loaded by core/init.inc
+        - This function is used by the core system
+
+Cache (core/classes/Cache.php)
+	- The Cache class is used to store data for later use.
+	- If a type of cache is defined in app/config.inc, an object of this class is automatically instantiated by core/init.inc and can be accessed anywhere via $GLOBALS['cache']
+        NOTE: this class is, as of this time, incomplete and largely theoretical.  'session' and 'file' types are supported, but my web host does not support memcache (and since this framework exists for my site...), so I have not been able to develop a set of true caching methods - but this is/will be the place for them
+
+Controller (core/classes/Controller.php)
+	- The Controller class is the base class for all Controllers.
+	- The Controller class provides the method 'render_page' which accepts a content file reference, a variable array, and, optionally, a layout file reference and constructs and outputs the web page from these pieces
+        - This class is used by the core system
+	
+DatabaseConnection (core/classes/DatabaseConnection.php)
+	- The DatabaseConnection class is used to connect to a database.
+	- If database info is defined in app/config AND the autoconnect item is set to TRUE, a database connection is automatically instantiated by core/init.inc and can be accessed anywhere via $GLOBALS['db'] (generally in models)
+	- The DatabaseConnection class provides an array of custom methods for common db requests
+        - This class is used by the core system if a database is defined in config.inc
+        NOTE: this class was developed for mysql, and uses the mysqli_ functions.  mssql (and possibly other db types) is(are) theoretically supported (on some platforms), but this class, as of this time, may require alteration to function correctly
+	
+Email (core/classes/Email.php)
+	- The Email class exists to provide a simple, object-oriented and somewhat less-picky interface to php's mail() function.
+	
+Encryption (core/classes/Encryption.php)
+	- The Encryption class is used to encrypt data.  
+	- The Encryption algorithm works on a character substitution method with primary and secondary keys and randomly generated noise characters
+        NOTE: Just for fun.  As of now, the algorithm used is one of my own creation, and so should not be relied upon in matters of life-and-death
+
+Error (core/classes/Error.php)
+	- The Error class is used to generate error pages for website errors - either through a static array or from a db table (default: tblErrors)
+        - This class is used by the core system
+	
+File (core/classes/File.php)
+	- The File class is used to handle file uploads as well as for referencing files and performing common file operations.
+	
+HTMLForm (core/classes/HTMLForm.php)
+	- The HTMLForm class is a collection of functions to more easily render html forms and form inputs.  It is primarily used in views.
+	- HTMLForm is a class to take advantage of __autoload()
+	
+Image (core/classes/Image.php)
+	- The Image class extends the File class's functions and is designed specifically for use with image files
+	- The Image class provides common image-manipulation functions
+	
+Log (core/classes/Log.php)
+        - The Log class extends the TextFile class's functions to incrementally write to text files with client/session information and messages
+        - This class is used by the core system if log config option set in app/config.inc
+
+Model (core/classes/Model.php)
+	- The Model class is the base class for all Models
+	- At this time, the Model base class provides no additional functionality - it is simply a baseline/placeholder
+        - This class is used by the core system
+
+Session
+        - The Session class compiles select information from the $_SESSION and $_SERVER superglobals into a more centralized object
+        - This information data object is assigned by the core to $_SESSION['session'].
+        - This class is used by the core system
+	
+SQLQuery (core/classes/SQLQuery.php)
+	- The SQLQuery class is used to create reasonably simple SQL queries (selects)
+        - This class is used by the core system if a database is defined in config.inc
+	NOTE: developed for MySQL - all features/methods may not be available/valid to all database types (e.g. LIMIT with MSSQL) 
+	
+String (core/classes/String.php)
+	- The String class is a collection of functions for manipulating strings according to different schemas
+	- String is a class to take advantage of __autoload()
+        - This class is used by the core system
+	
+TextFile (core/classes/TextFile.php)
+        - The TextFile class extends the File class's functions and is designed specifically for use with text files
+
+URI (core/classes/URI.php)
+	- The URI class is used (by init) to analyze and route request URIs
+        - This class is used by the core system
+	
+User (core/classes/User.php)
+	- The User class is used for authentication when site functions require a login - either by a static user array, or from a db table (default: tblUsers)
+	- The User class may need to be extended or modified depending on the needs of the site
+
+XML (core/classes/XML.php)
+	- The XML class is used to parse XML documents or strings
+
+EXPORTING
+-------------------------------------------------------------------------------------------------------------
+It might be worth noting that there really isn't anything inherent about any of the core classes that ties them to the PenguinIgniter framework - that is to say, any of these classes could be used in any other environment.
+However, all of the core classes were written *within* this environment, which means that a core class may assume other core classes are present and loaded, and may call functions from them without checking for their presence.
+
+It should also be noted that some classes assume or refer to certain $GLOBALS['config'][] values for minor functions.
+If these values are not set, it may result in minor hiccups or notices.
+
+=============================================================================================================
+III. CONTROLLERS 
+=============================================================================================================
+
+Concept:
+
+Controllers are php classes for a specific web page (and its associated screens, each defined as a class method).
+	- e.g. the class Controller_page
+		- Controller_page will have an index() method, which will perform all of the functions needed at http://site.com/page and produce (any) output
+		- Controller_page may also have additional methods - method subpage() would perform all of the functions needed at http://site.com/page/subpage and produce (any) output
+
+Guidelines:
+
+- controller files MUST be located in app/controllers
+
+- controller classes MUST be named Controller_[page name] (for autoloader and init) and MUST extend the base Controller class
+
+- controller methods should be named according to logical url names
+	- e.g. blog/entry/102
+		- 'blog' is the controller name (Controller_blog in app/controllers/Controller_blog.php)
+		- 'entry' is the method name for calling a specific entry (public function entry($vars=array()){})
+	
+- code blocks used by multiple controllers should be stored in app/controllers/_common/ and should be included by controller methods
+
+- controllers should contain all page logic and Model references, passing only display data to Views
+
+
+=============================================================================================================
+IV. MODELS 
+=============================================================================================================
+
+Concept:
+
+Models are php data objects that are manipulated by controllers
+	- e.g. Model_BlogEntry
+		- Model_BlogEntry will have appropriate properties for a blog entry and methods that obtain data to populate those properties
+
+Guidelines:
+
+- model files MUST be located in app/models
+
+- model classes MUST be named Model_[object name] (for autoloader) and should extend the base Model class (or another class that extends the base Model class)
+    NOTE: extending of the Model core class is largely theoretical at this point, as Model doesn't do anything
+
+=============================================================================================================
+V. VIEWS 
+=============================================================================================================
+
+Concept:
+
+Views are html/css output files that are displayed by controllers.  
+In general, one primary 'content' view is called by the controller and embedded in the 'layout' view - though that view may include additional component views.
+
+Default Components:
+
+- the default main/base view is located at app/views/_common/layout.inc
+    - the 'layout' view is the consistent site-wide html page structure/framework.  Page-specific 'content' views are embedded within the layout view.
+
+- the default main css file is located at app/views/_common/style.css
+
+Guidelines:
+
+- view files MUST be located in app/views
+
+- page/content views should be organized into subdirectories by controller/page
+	- e.g. blog/entry/102
+		- views for controller 'Controller_blog' should be in views/blog/
+		
+- views shared by multiple pages should be stored in app/views/_common/
+
+- views should contain only display logic, all operations and model references (with very few exceptions) should occur in Controllers
+
+=============================================================================================================
+VI. THIRD PARTY CODE APPLICATION 
+=============================================================================================================
+
+Guidlines:
+
+- third-party code snippets, scripts, etc should be contained in subfolders in app/third_party/ and accessed via include/link
