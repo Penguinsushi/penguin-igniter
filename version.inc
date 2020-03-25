@@ -1,0 +1,1 @@
+<?php $GLOBALS['pi_version'] = '1.0.3'; ?>
