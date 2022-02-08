@@ -245,7 +245,7 @@ class Article
     
     private function setURLID()
     {
-        $this->URLID = $this->ArticleRowID.'_'.String::for_url_segment($this->ArticleTitle);
+        $this->URLID = $this->ArticleRowID.'_'.TextString::for_url_segment($this->ArticleTitle);
     }
     
     private function setTags()

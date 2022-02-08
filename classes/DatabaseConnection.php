@@ -256,7 +256,7 @@ class DatabaseConnection
         	if ($this->isFieldInTable($table,$field))
         	{
             	$fieldsquery.=",$field";
-            	$valuesquery.=",'".String::db_sanitize($value)."'";
+            	$valuesquery.=",'".TextString::db_sanitize($value)."'";
             }
         }
         $fieldsquery = substr($fieldsquery,1);
@@ -284,7 +284,7 @@ class DatabaseConnection
         {
         	if ($this->isFieldInTable($table,$field))
         	{
-            	$updatequery.=",$field = '".String::db_sanitize($value)."'";
+            	$updatequery.=",$field = '".TextString::db_sanitize($value)."'";
             }
         }
         $updatequery = substr($updatequery,1);

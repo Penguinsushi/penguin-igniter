@@ -45,12 +45,12 @@ class File
         // if renaming, overwrite
         if (!empty($rename))
         {
-            $newfile = String::valid_filename($rename);
+            $newfile = TextString::valid_filename($rename);
         }
         // otherwise, add incremented prefix to keep files from overwriting
         else
         {
-            $newfile = String::valid_filename($upload['name']);
+            $newfile = TextString::valid_filename($upload['name']);
             $inc=0;
             $incnewfile = $newfile;
             while(is_file($dir.$incnewfile))

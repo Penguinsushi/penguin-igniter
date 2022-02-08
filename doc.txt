@@ -127,9 +127,9 @@ SQLQuery (core/classes/SQLQuery.php)
         - This class is used by the core system if a database is defined in config.inc
 	NOTE: developed for MySQL - all features/methods may not be available/valid to all database types (e.g. LIMIT with MSSQL) 
 	
-String (core/classes/String.php)
-	- The String class is a collection of functions for manipulating strings according to different schemas
-	- String is a class to take advantage of __autoload()
+TextString (core/classes/TextString.php)
+	- The TextString class is a collection of functions for manipulating strings according to different schemas
+	- TextString is a class to take advantage of __autoload()
         - This class is used by the core system
 	
 TextFile (core/classes/TextFile.php)

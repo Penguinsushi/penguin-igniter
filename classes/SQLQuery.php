@@ -88,7 +88,7 @@ class SQLQuery
             if (!empty($value))
             {
                 if ($noenc == TRUE) {$enc="";}else{$enc="'";}
-                $tw.= " $op $enc".String::db_sanitize($value)."$enc";
+                $tw.= " $op $enc".TextString::db_sanitize($value)."$enc";
             }
             $tw.= ")";
             $this->where[] = $tw;
@@ -112,14 +112,14 @@ class SQLQuery
                 {
                     if ($quotes == 'out')
                     {
-                        $searchterms2 = String::words($s_value);
+                        $searchterms2 = TextString::words($s_value);
                         foreach($searchterms2 AS $s_key => $term)
                         {
                                 $searchquery.=" AND (";
                                 $withterms='';
                                 foreach($searchfields AS $sf_key => $field)
                                 {
-                                        $withterms.=" OR $field LIKE '%".String::db_sanitize($term)."%'";
+                                        $withterms.=" OR $field LIKE '%".TextString::db_sanitize($term)."%'";
                                 }
                                 $withterms = substr($withterms,4);
                                 $searchquery.= $withterms;
@@ -132,7 +132,7 @@ class SQLQuery
                         $withterms='';
                         foreach($searchfields AS $sf_key => $field)
                         {
-                                $withterms.=" OR $field LIKE '%".String::db_sanitize($s_value)."%'";
+                                $withterms.=" OR $field LIKE '%".TextString::db_sanitize($s_value)."%'";
                         }
                         $withterms = substr($withterms,4);
                         $searchquery.= $withterms;
