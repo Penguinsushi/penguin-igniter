@@ -29,7 +29,7 @@ class Log extends TextFile
         $details = json_decode(file_get_contents("http://api.ipstack.com/{$_SESSION['session']->ip}?access_key=cda377e4694ac81027c01111de7a09b2"));
         if (!empty($details->city)) {$geoip = $details->city.' ';} else {$geoip='';}
         if (!empty($details->region_name)) {$geoip.= $details->region_name.' ';}
-        $geoip.= $details->country_name;
+        if (!empty($details->country_name)) {$geoip.= $details->country_name.' ';}
         $this->info = "IP(".$_SESSION['session']->ip.") GEO(".$geoip.") HOST(".$_SESSION['session']->host.") AGENT(".$_SESSION['session']->agent.") SESSION(".$_SESSION['session']->id."(%SESSAGE%)) POST(%POST%)";
         parent::__construct($path);
     }
