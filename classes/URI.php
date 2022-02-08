@@ -20,7 +20,7 @@ class URI
     public $basedir = "";
     public $uri = "";
     public $query_string = "";
-    public $query_array = "";
+    public $query_array = array();
     public $elements = array();
     public $fake_ext = "";
     
