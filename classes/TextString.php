@@ -6,11 +6,11 @@
 // USAGE EXAMPLE
 // =============================================================================================================
 // $string = "' OR User != '"; // SQL INJECTION!
-// $string = String::db_sanitize($string); // sanatize for db queries
-// $string = String::sterilize($string); // remove all non alpha-numeric
+// $string = TextString::db_sanitize($string); // sanatize for db queries
+// $string = TextString::sterilize($string); // remove all non alpha-numeric
 // =============================================================================================================
 
-class String
+class TextString
 {
 
     // PROPERTIES
