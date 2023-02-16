@@ -11,7 +11,7 @@ require_once($GLOBALS['config']['core_dir']."version.inc");
 
 // include autoloader
 require_once($GLOBALS['config']['core_dir']."autoload.php");
-spl_autoload_register('__autoload');
+spl_autoload_register('autoloader');
 
 // =============================================================================================================
 // URI PARSING

@@ -1,6 +1,6 @@
 <?php 
 
-function __autoload($class) {
+function autoloader($class) {
     
     if (substr($class,0,6) == 'Model_' AND is_file($GLOBALS['config']['app_dir']."models/$class.php"))
     {
