@@ -14,7 +14,7 @@ class APICaller
 
     public $url = '';
     public $headers = [];
-    public $post_fields = [];
+    public $post_fields = null;
     public $post = false;
     public $get_fields = [];
     public $log_name = null;
