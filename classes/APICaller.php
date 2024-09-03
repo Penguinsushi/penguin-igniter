@@ -151,10 +151,10 @@ class APICaller
         }
         $rdata = curl_exec($ch);
         if (isset($this->get_fields)) {
-            $this->request_data .= 'GET :: ' . print_r($this->get_fields, true);
+            $this->request_data .= ' GET :: ' . print_r($this->get_fields, true) . ' ';
         }
         if (isset($this->post_fields)) {
-            $this->request_data .= 'POST :: ' . print_r($this->post_fields, true);
+            $this->request_data .= ' POST :: ' . print_r($this->post_fields, true) . ' ';
         }
         $this->request_headers = curl_getinfo($ch, CURLINFO_HEADER_OUT);
         $raw = print_r($rdata, true);

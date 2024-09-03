@@ -46,12 +46,16 @@ if (!empty($_SESSION['dev'])) {error_reporting(E_ALL);} else {error_reporting(0)
 if (!empty($GLOBALS['config']['log']))
 {
     $GLOBALS['log'] = new Log($GLOBALS['config']['log']);
-    if (    $GLOBALS['config']['log_pageloads'] === TRUE 
+    if (    
+        !empty($GLOBALS['config']['log_pageloads']) &&
+        (
+            $GLOBALS['config']['log_pageloads'] === TRUE 
             OR (strstr($GLOBALS['config']['log_pageloads'],'PAGE('.$GLOBALS['page'].')'))
             OR (strstr($GLOBALS['config']['log_pageloads'],'POST') AND !empty($_POST))
             OR (strstr($GLOBALS['config']['log_pageloads'],'QUERY') AND !empty($GLOBALS['uri']->query_string))
             OR (strstr($GLOBALS['config']['log_pageloads'],'SESSION') AND !empty($_SESSION['session']->new) AND ($_SESSION['session']->bot == FALSE OR !strstr($GLOBALS['config']['log_pageloads'],'NOBOTS')))
-            ) 
+            )
+        )
     {$GLOBALS['log']->writeEntry();}
 }
 

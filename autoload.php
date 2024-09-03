@@ -6,7 +6,7 @@ function autoloader($class) {
     {
         require_once($GLOBALS['config']['app_dir']."models/$class.php");
     }
-    elseif (substr($class,0,11) == 'Library_' AND is_file($GLOBALS['config']['app_dir']."libraries/$class.php"))
+    elseif (substr($class,0,8) == 'Library_' AND is_file($GLOBALS['config']['app_dir']."libraries/$class.php"))
     {
         require_once($GLOBALS['config']['app_dir']."libraries/$class.php");
     }
