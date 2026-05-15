@@ -26,7 +26,7 @@ class Cache
     
     public function __construct($type=NULL)
     {
-        if (empty($type) AND !empty($GLOBALS['config']['cachetype'])) {$type = $GLOBALS['config']['cachetype'];}
+        if (empty($type) AND Config::val('cachetype')) {$type = Config::val('cachetype');}
         if (empty($type) OR !in_array($type,self::$cachetypes)) 
         {
             $type = 'session';
@@ -39,6 +39,19 @@ class Cache
     }
     
     // METHODS
+        
+    public static function val($tag, $value, $unset = false) {
+        $cache = self::single();
+        if ($unset) {
+            return $cache->cacheSet($tag, null);
+        } else {
+            if (!empty($value)) {
+                return $cache->cacheSet($tag, $value);
+            } else {
+                return $cache->cacheGet($tag);
+            }
+        }
+    }
     
     public function cacheSet($var,$value)
     {
@@ -138,6 +151,15 @@ class Cache
             }
             $td->close();
         }
+    }
+    
+    // PRIVATE
+    
+    private static function single() {
+        if (empty($GLOBALS['pi_cache'])) {
+            $GLOBALS['pi_cache'] = new self(Config::val('cachetype'));
+        }
+        return $GLOBALS['pi_cache'];
     }
     
 }

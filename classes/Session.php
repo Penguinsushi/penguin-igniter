@@ -22,6 +22,10 @@ class Session
     public $bot = FALSE;
     public $new = TRUE;
     
+    public $values = [];
+    
+    public static $initialized = false;
+    
     // CONSTRUCTOR
     
     public function __construct()
@@ -35,6 +39,32 @@ class Session
     
     // PUBLIC METHODS
     
+    public static function initialize() {
+        if (self::$initialized) {
+            return;
+        }
+        session_start();
+        self::single(true);
+        self::$initialized = true;
+    }
+    
+    public static function current() {
+        return self::single();
+    }
+    
+    public static function val($tag, $value = null, $unset = false) {
+        $current = self::current();
+        if ($unset) {
+            return $current->setVal($tag, null);
+        } else {
+            if (!empty($value)) {
+                return $current->setVal($tag, $value);
+            } else {
+                return $current->getVal($tag);
+            }
+        }
+    }
+    
     public function age()
     {
         $age = time() - $this->start_time;
@@ -42,6 +72,23 @@ class Session
     }
     
     // PRIVATE METHODS
+    
+    private function getVal($tag) {
+        return $this->values[$tag] ?? null;
+    }
+    
+    private function setVal($tag, $value) {
+        return $this->values[$tag] = $value;
+    }
+    
+    private static function single($init = false) {
+        if (empty($_SESSION['pi_session'])) {
+            $_SESSION['pi_session'] = new self();
+        } elseif ($init) {
+            $_SESSION['pi_session']->new = false;
+        }
+        return $_SESSION['pi_session'];
+    }
     
     private function setTime()
     {

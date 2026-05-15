@@ -45,7 +45,7 @@ class ArticleDigitalAsset
         $sql->FROM(self::$table);
         $sql->WHERE('AssetArticleRowID',$articlerowid);
         $sql->ORDER_BY('AssetDateTime','ASC');
-        $da = $GLOBALS['db']->createDataObjects($sql->query,'ArticleDigitalAsset');
+        $da = DatabaseConnection::site()->createDataObjects($sql->query,'ArticleDigitalAsset');
         $assets = array('IMAGE'=>array(),'DOC'=>array(),'AUDIO'=>array());
         foreach($da AS $key => $asset)
         {
@@ -58,7 +58,7 @@ class ArticleDigitalAsset
     {
         $id = intval($rowid);
         $sql = new SQLQuery(self::$table,'AssetRowID',$id);
-        return $GLOBALS['db']->createDataObjects($sql->query,'ArticleDigitalAsset',NULL,NULL,'single');
+        return DatabaseConnection::site()->createDataObjects($sql->query,'ArticleDigitalAsset',NULL,NULL,'single');
     }
     
     public static function getByFilename($filename,$type=NULL)
@@ -67,17 +67,17 @@ class ArticleDigitalAsset
         $sql->FROM(self::$table);
         $sql->WHERE('AssetPath','%'.$filename,'LIKE');
         if (!empty($type)) {$sql->WHERE('AssetType',strtoupper($type));}
-        return $GLOBALS['db']->createDataObjects($sql->query,'ArticleDigitalAsset',NULL,NULL,'single');
+        return DatabaseConnection::site()->createDataObjects($sql->query,'ArticleDigitalAsset',NULL,NULL,'single');
     }
     
     public static function insertAsset($fieldvalues)
     {
-        return $GLOBALS['db']->dataInsert(self::$table,$fieldvalues);
+        return DatabaseConnection::site()->dataInsert(self::$table,$fieldvalues);
     }
     
     public static function updateAsset($id,$fieldvalues)
     {
-        return $GLOBALS['db']->dataUpdate(self::$table,'AssetRowID',$id,$fieldvalues);
+        return DatabaseConnection::site()->dataUpdate(self::$table,'AssetRowID',$id,$fieldvalues);
     }
     
     public static function deleteAsset($id,$filedelete=TRUE)
@@ -88,7 +88,7 @@ class ArticleDigitalAsset
             unlink($asset->AssetPath);
             if (!empty($asset->AssetThumbnailObject->path)) {unlink($asset->AssetThumbnailObject->path);}
         }
-        return $GLOBALS['db']->dataDelete(self::$table,'AssetRowID',$id);
+        return DatabaseConnection::site()->dataDelete(self::$table,'AssetRowID',$id);
     }
     
     // create thumbnails for any files in directory that don't have them

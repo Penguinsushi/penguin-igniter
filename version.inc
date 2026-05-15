@@ -1,1 +1,1 @@
-<?php $GLOBALS['pi_version'] = '1.0.3'; ?>
+<?php $config['pi_version'] = '1.1.0'; ?>

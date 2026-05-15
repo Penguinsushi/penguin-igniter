@@ -35,20 +35,20 @@ class Error
     
     public static function getError($type,$log_times=FALSE)
     {
-        if (!empty($GLOBALS['db']) AND $GLOBALS['db']->table_exists(self::$table))
+        if (DatabaseConnection::site() AND DatabaseConnection::site()->table_exists(self::$table))
         {
             $sql = new SQLQuery();
             $sql->FROM(self::$table);
             $sql->WHERE('ErrorType',$type);
             $sql->ORDER_BY('RAND()');
-            $error = $GLOBALS['db']->createDataObjects($sql->query,'Error',NULL,NULL,'single');
+            $error = DatabaseConnection::site()->createDataObjects($sql->query,'Error',NULL,NULL,'single');
             if (empty($error))
             {
                 $error = self::getError('unknown');
             }
             if ($log_times)
             {
-                $GLOBALS['db']->query('UPDATE '.self::$table." SET ErrorShown = ErrorShown + 1 WHERE ErrorRowID = '".$error->ErrorRowID."'");
+                DatabaseConnection::site()->query('UPDATE '.self::$table." SET ErrorShown = ErrorShown + 1 WHERE ErrorRowID = '".$error->ErrorRowID."'");
             }
             return $error;
         }

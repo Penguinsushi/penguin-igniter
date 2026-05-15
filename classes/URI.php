@@ -46,6 +46,44 @@ class URI
     
     // STATIC METHODS
     
+    public static function current() {
+        return self::single();
+    }
+    
+    public static function routing() {
+        $current = self::current();
+        $current->baseDir(Config::val('base_url'));
+        $current->directEmpty(Config::val('home_page'),Config::val('redirect_empty'));
+        $current->redirectURIs(Config::val('redirects'));
+        $current->rewriteURIs(Config::val('rewrites'));
+        $current->fakeExt(Config::val('fake_ext'),Config::val('force_fake'));
+        $current->setElements();
+    }
+    
+    public static function string() {
+        $current = self::current();
+        return $current->uri;
+    }
+    
+    public static function page() {
+        $current = self::current();
+        return $current->elements[0];
+    }
+    
+    public static function element($num) {
+        $current = self::current();
+        return $current->elements[$num] ?? null;
+    }
+    
+    public static function query($key = null) {
+        $current = self::current();
+        if ($key) {
+            return $current->query_array[$key] ?? null;
+        } else {
+            return $current->query_array;
+        }
+    }
+    
     // if superflous elements exist, redirect to uri that has only the required *number* of elements
     public static function trimUnneededElements($last_index_needed=-1,$use_uri=NULL)
     {
@@ -55,7 +93,7 @@ class URI
         if (!empty($uri->elements[$unneeded]))
         {
             header ('HTTP/1.1 301 Moved Permanently');
-            header('Location: '.$GLOBALS['config']['base_url'].implode('/',array_slice($uri->elements,0,$unneeded)));
+            header('Location: '.Config::val('base_url').implode('/',array_slice($uri->elements,0,$unneeded)));
             die;
         }
     }
@@ -136,6 +174,13 @@ class URI
     }
     
     // PRIVATE METHODS
+    
+    private static function single() {
+        if (empty($GLOBALS['pi_uri'])) {
+            $GLOBALS['pi_uri'] = new self();
+        }
+        return $GLOBALS['pi_uri'];
+    }
     
     private function setQueryArray()
     {
