@@ -50,8 +50,8 @@ class APICaller
     {
         $caller = new self($props);
         $caller->init();
-        if (!empty($caller->log_name) && !empty($GLOBALS['log'])) {
-            $caller->log = $GLOBALS['log'];
+        if (!empty($caller->log_name) && Log::site()) {
+            $caller->log = Log::site();
         }  
         $caller->startTime();
         $caller->logRequest();

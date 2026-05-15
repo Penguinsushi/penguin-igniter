@@ -36,6 +36,50 @@ class Log extends TextFile
     
     // PUBLIC METHODS
     
+    public static function site() {
+        if (!Config::val('log')) {
+            return false;
+        }
+        if (empty($GLOBALS['pi_log'])) {
+            $GLOBALS['pi_log'] = new self(Config::val('log'));
+        }
+        return $GLOBALS['pi_log'];
+    }
+    
+    public static function entry($message = null, $info = true) {
+        $site = self::site();
+        if (!$site) {
+            return;
+        }
+        $site->writeEntry($message, $info);
+    }
+    
+    public static function logPageLoad() {
+        if (    
+            self::site() &&
+            (
+                Config::val('log_pageloads') === TRUE 
+                OR (strstr(Config::val('log_pageloads'),'PAGE('.URI::page().')'))
+                OR (
+                    strstr(Config::val('log_pageloads'),'POST') AND
+                    !empty($_POST)
+                ) OR (
+                   strstr(Config::val('log_pageloads'),'QUERY') AND
+                   URI::current()->query_string
+                ) OR (
+                   strstr(Config::val('log_pageloads'),'SESSION') AND
+                   Session::current()->new AND 
+                   (
+                        Session::current()->bot == FALSE OR 
+                        !strstr(Config::val('log_pageloads'),'NOBOTS')
+                   )
+                )
+            )
+        ) {
+            Log::entry();
+        }
+    }
+    
     public function writeEntry($message=NULL,$include_info=TRUE)
     {
         $write = $this->linestart;

@@ -31,15 +31,6 @@ class DatabaseConnection
 	{
             // use mysqli_ instead of deprecated/unpreferred mysql_
             if ($type == 'mysql') {$type = 'mysqli';}
-            if (!empty($GLOBALS['config']['db_type']) AND $GLOBALS['config']['db_type'] == 'mysql') {$GLOBALS['config']['db_type'] = 'mysqli';}
-            // check for config
-            if (empty($type) AND !empty($GLOBALS['config']['db_type'])) {$type = $GLOBALS['config']['db_type'];}
-            if (empty($host) AND !empty($GLOBALS['config']['db_host'])) {$host = $GLOBALS['config']['db_host'];}
-            if (empty($user) AND !empty($GLOBALS['config']['db_user'])) {$user = $GLOBALS['config']['db_user'];}
-            if (empty($pass) AND !empty($GLOBALS['config']['db_pass'])) {$pass = $GLOBALS['config']['db_pass'];}
-            if (empty($db) AND !empty($GLOBALS['config']['db_name'])) {$db = $GLOBALS['config']['db_name'];}
-            if (empty($port) AND !empty($GLOBALS['config']['db_port'])) {$port = $GLOBALS['config']['db_port'];}
-            if (empty($socket) AND !empty($GLOBALS['config']['db_socket'])) {$socket = $GLOBALS['config']['db_socket'];}
             // define properties
             $this->type = $type;
             $this->host = $host;
@@ -52,11 +43,18 @@ class DatabaseConnection
             $this->connect();
 	}
 	
+        public static function site() {
+            if (!Config::val('db_name')) {
+                return false;
+            }
+            return self::single();
+        }
+        
 	// GENERAL DB INTERFACE METHODS
         
 	public function query($query)
 	{
-            if (!empty($GLOBALS['uri']->query_array['showqueries'])) {echo $query;}
+            if (URI::query('showqueries')) {echo $query;}
             if ($this->type == 'mysqli')
             {
 		return mysqli_query($this->resource_link,$query);	
@@ -299,6 +297,22 @@ class DatabaseConnection
     }
     
     // PRIVATE METHODS
+    
+    private static function single() {
+        if (empty($GLOBALS['pi_site_db'])) {
+            $db = new self(
+                Config::val('db_type'),
+                Config::val('db_host'),
+                Config::val('db_user'),
+                Config::val('db_pass'),
+                Config::val('db_name'),
+                Config::val('db_port'),
+                Config::val('db_socket')
+            );
+            $GLOBALS['pi_site_db'] = $db;
+        }
+        return $GLOBALS['pi_site_db'];
+    }
     
     private function connect()
     {

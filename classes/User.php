@@ -41,13 +41,13 @@ class User
 	{
             // USER LOGIN
             // if user table exists, login using its data
-            if (!empty($GLOBALS['db']) AND $GLOBALS['db']->table_exists(self::$table))
+            if (DatabaseConnection::site() AND DatabaseConnection::site()->table_exists(self::$table))
             {
                 $sql = new SQLQuery();
                 $sql->FROM(self::$table);
                 $sql->WHERE("UserUsername",$username);
                 $sql->WHERE("UserPasswordHash",$passwordhash);
-                $user = $GLOBALS['db']->createDataObjects($sql->query,'User',NULL,NULL,'single');
+                $user = DatabaseConnection::site()->createDataObjects($sql->query,'User',NULL,NULL,'single');
                 if (!empty($user))
                 {
                     
@@ -80,7 +80,7 @@ class User
             }
             // RECORD LOGIN INFO
             // if login table exists, record login attempt
-            if (!empty($GLOBALS['db']) AND $GLOBALS['db']->table_exists(self::$login_table))
+            if (DatabaseConnection::site() AND DatabaseConnection::site()->table_exists(self::$login_table))
             {
                 $logindata = array(
                                     'LoginUsername' => $username,
@@ -90,7 +90,7 @@ class User
                                     'LoginDateTime' => date("Y-m-d H:i:s"),
                                     'LoginSessionID' => $_SESSION['session']->id
                                     );
-                $GLOBALS['db']->dataInsert(self::$login_table,$logindata);
+                DatabaseConnection::site()->dataInsert(self::$login_table,$logindata);
             }
             if ($return == FALSE)
             {
@@ -100,7 +100,7 @@ class User
                 $sql->WHERE('LoginDateTime',$yesterday,'>=');
                 $sql->WHERE('LoginStatus','FAILURE');
                 $sql->ORDER_BY('LoginDateTime');
-                $rows = $GLOBALS['db']->getDataRows($sql->query);
+                $rows = DatabaseConnection::site()->getDataRows($sql->query);
                 $count = count($rows);
                 if ($count % 5 == 0)
                 {
@@ -141,7 +141,7 @@ class User
             {
             	if (strtolower($redirect) == TRUE)
             	{
-	                header("Location: ".$GLOBALS['config']['access_restricted'].'/'.urlencode($GLOBALS['uri']->uri));
+	                header("Location: ".Config::val('access_restricted').'/'.URI::string());
                     die;
 	            }
 	            elseif(strtolower($redirect) == FALSE)
@@ -150,7 +150,7 @@ class User
 	            }
                     else
                     {
-                        header("Location: ".$GLOBALS['config']['base_url'].$redirect);
+                        header("Location: ".Config::val('base_url').$redirect);
                     }
             }
         }

@@ -32,7 +32,7 @@ class Controller
     public function index()
     {
         // redirect to error page
-        header("Location: ".$GLOBALS['config']['content_error']);
+        header("Location: ".Config::val('content_error'));
         die;
     }
     
@@ -41,10 +41,10 @@ class Controller
     protected function render_page($CONTENT,$variable_array=array(),$layout=NULL)
     {
         // verify valid $CONTENT
-        if (!is_file($GLOBALS['config']['app_dir']."views/".$GLOBALS['config']['views_theme_dir']."$CONTENT"))
+        if (!is_file(Config::val('app_dir')."views/".Config::val('views_theme_dir')."$CONTENT"))
         {
                 // redirect to error page
-                header("Location: ".$GLOBALS['config']['content_error']);
+                header("Location: ".Config::val('content_error'));
                 die;
         }
         else
@@ -55,19 +55,19 @@ class Controller
             // show layout
             if (empty($layout))
             {
-                    $layout = $GLOBALS['config']['default_layout'];
+                    $layout = Config::val('default_layout');
             }
-            include($GLOBALS['config']['app_dir']."views/".$GLOBALS['config']['views_theme_dir']."$layout");
+            include(Config::val('app_dir')."views/".Config::val('views_theme_dir')."$layout");
         }
     }
     
     protected function view($view,$variable_array=array(),$output=TRUE)
     {
         // verify valid $CONTENT
-        if (!is_file($GLOBALS['config']['app_dir']."views/$view"))
+        if (!is_file(Config::val('app_dir')."views/$view"))
         {
                 // redirect to error page
-                header("Location: ".$GLOBALS['config']['content_error']);
+                header("Location: ".Config::val('content_error'));
                 die;
         }
         else
@@ -75,12 +75,12 @@ class Controller
             extract($variable_array);
             if ($output)
             {
-                include($GLOBALS['config']['app_dir']."views/".$view);
+                include(Config::val('app_dir')."views/".$view);
             }
             else
             {
                 ob_start();
-                include($GLOBALS['config']['app_dir']."views/".$view);
+                include(Config::val('app_dir')."views/".$view);
                 return ob_get_clean();
             }
         }
